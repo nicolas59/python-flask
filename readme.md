@@ -1,8 +1,14 @@
 ## Installation
 
+1. [A la découverte de Flask](01.flask.md)
+2. [SQL Alchemy](02.sql-alchemy.md)
+
 ### Base de données
 
-### From scrach
+### Prepération du projet
+
+> Etape de prépartion du projet
+
 ```
 $ pip install flask
 $ pip install flask-sqlalchemy
@@ -12,6 +18,9 @@ $ pip freeze > requirements.tx
 La dernieré commande permet de générer un fichier contenant les dépendances.
 
 ### Récuperation des dependances
+
+> Etape lors de la récupération du projet
+
 Dans le cas où un fichier de dépendances est présent, il est possible de charger en une
 fois les dépendances.
 
@@ -19,252 +28,10 @@ fois les dépendances.
 $ pip install -r requirements.txt
 ```
 
-## Mise en place de Flask
-
-* créer un fichier app.py
-* importer Flask et instancier le
-
-```python
-from flask import Flask 
-app = Flask(__name__)
-```
-
-* Definir la première route
-
-Pour définir une route, il est nécessaire de déclarer une méthode et 
-d'ajouter une décorateur permettant d'indiquer l'url associée à l'invocation de la méthode.
-
-````python
-@app.route("/")
-def home():
-    return "hello"
-````
-
-* pour lancer le serveur, executer la méthode `run`
-````python
-app.run(host="0.0.0.0", port=8080)
-````
-
-Et voici le résultat : 
-```
-$ curl 127.0.0.1:8080
-hello
-```
-
-## Récupération des données de l'url
-
-### A partir du path
-
-flask permet d'extraire les paramétres présent dans le path et d'associer
-chaque paramétre à des arguments de la méthode.
-
-Prenons l'exemple de l'affichage des taches à réaliser (todo)
-Nous souhaiterions les urls suivantes : 
-- recupération de la liste des taches : /todos
-- récupération d'une tache à partir de son identifiant : /todos/<id>
-
-Pour extraire l'id de la tâche, il est nécessaire de réaliser la méthode suivante : 
-
-```python
-@app.route("/todos/<id>")
-def getTodo(id):
-    return ""
-```
-
-voici l'exemple complét : 
-
-
-````python
-todos = [
-    {"id": "1", "titre":"TODO 1", "description": "Prepartion cours Java"},
-    {"id": "2", "titre":"TODO 2", "description": "Prepartion cours Python"},
-    {"id": "3", "titre":"TODO 3", "description": "Faire une pause"}
-]
-
-@app.route("/todos")
-def displayTodos():
-    return "".join([printTodo(todo) for todo in todos])
-
-@app.route("/todos/<id>")
-def getTodo(id):
-    result = filter(lambda it: it["id"] == id, todos)
-    return "".join([printTodo(todo)for todo in result])
-````
-```
-$ curl 127.0.0.1:8080/todos
-    <div>
-        <h2>TODO 1</h2>
-        <p>Prepartion cours Java</p> 
-    </div>
-    <div>
-        <h2>TODO 2</h2>
-        <p>Prepartion cours Python</p> 
-    </div>
-    <div>
-        <h2>TODO 3</h2>
-        <p>Faire une pause</p> 
-    </div>
-    
-$ curl 127.0.0.1:8080/todos/1
-    <div>
-        <h2>TODO 1</h2>
-        <p>Prepartion cours Java</p> 
-    </div>
-```
-
-### A partir des paramétres transmis en GET
-
-*Flask* fournit un objet request permettant d'extraire des élements présents dans la requete.
-
-- importer la propriété request
-````python
-from flask import Flask, request
-````
-- Pour récupérer un paramétre, il suffit d'utiliser la propriété `request.args`
-
-```python
-@app.route("/todos")
-def displayTodos():
-    sort_by = request.args.get("sort_by")
-    items = todos
-    try:
-        if sort_by:
-            items = sorted(items, key=lambda it: it[sort_by])
-    except:
-        items = []
-    return "".join([printTodo(todo) for todo in items])
-```
-
-### A partir des paramétres transmis en POST
-
-La fonction *request* fournie un fonction *form* permettant de récupérer les éléments
-postés par le formulaire.
-
-Nous definssons la méthode *init_form* afin d'afficher un formulaire.
-
-````python
-@app.route(rule="/todos/create", methods=["GET"])
-def init_form():
-    return """
-    <form method="POST">
-        <div><label>Titre : </label><input type="text" name="title"/></div>
-        <div><label>Description : </label><textarea name="description"></textarea></div>
-        <input type="submit" value="Soumettre"/> 
-    </form>
-    """
-````
-
-La méthode *create* récupére les élements soumis en methode POST par le formulaire afin d'ajouter 
-une tâche. 
-
-````python
-@app.route(rule="/todos/create", methods=["POST"])
-def create():
-    title = request.form.get("title")
-    description = request.form.get("description")
-    id = sorted(todos, key=lambda it: it["id"])[-1]["id"] + 1
-    todos.append({
-        "id": id,
-        "titre": title,
-        "description": description
-    })
-    return redirect("/todos")
-````
-### A partir d'un flux JSON.
-
-La fonction request founit la propriété *json* permettant de récuperer le flux json et de le convertir
-soit en dictionnaire soit en liste.
-
-la méthode *create_with_json* recupére ainsi le flux JSON et ajoute une nouvelle tâche.
-
-```python
-@app.route(rule="/api/todos", methods=["POST"])
-def create_with_json():
-    data = request.json
-    id = sorted(todos, key=lambda it: it["id"])[-1]["id"] + 1
-    todos.append({
-        "id": id,
-        "titre": data["title"],
-        "description": data["description"]
-    })
-    return flask.Response(status=201, headers= {"Location" : f"/todos/{id}"});
-````
 
 
 
-````shell
-$ curl 127.0.0.1:8080/api/todos \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Tâche", "description": "Une nouvelle tâche"}' \
-  -v
 
-* Trying 127.0.0.1...
-* TCP_NODELAY set
-* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
-> POST /api/todos HTTP/1.1
-> Host: 127.0.0.1:8080
-> User-Agent: curl/7.64.1
-> Accept: */*
-> Content-Type: application/json
-> Content-Length: 56
-> 
-* upload completely sent off: 56 out of 56 bytes
-* HTTP 1.0, assume close after body
-< HTTP/1.0 201 CREATED
-< Location: http://127.0.0.1:8080/todos/9
-< Content-Type: text/html; charset=utf-8
-< Content-Length: 0
-< Server: Werkzeug/2.0.2 Python/3.8.3
-< Date: Fri, 14 Jan 2022 22:10:43 GMT
-
-
-````
-
-
-## Utilisation du JSON
-Bien qu'il soit possible de réaliser du rendu html en utilisant le moteur *jinja2*, **Flask** est plus adapté pour founir
-des flux JSON.
-
-flask fournit la fontion **jsonify** permattant de transformer des objets et dictionnaires en flux JSON. 
-Cette méthode s'occupe également de modifier l'entete **content-type** 
-
-- importer la méthode **jsonify**
-
-```python
-from flask import Flask, request, jsonify
-```
-
-- au lieu de retourner une chaine de caractères, 
-utiliser la méthode **jsonify** en passant l'objet.
-
-```python
-@app.route("/api/todos")
-def getTodoApi():
-   return jsonify(todos)
-```
-
-```
-$ curl 127.0.0.1:8080/api/todos -v
-
-* Trying 127.0.0.1...
-* TCP_NODELAY set
-* Connected to 127.0.0.1 (127.0.0.1) port 8080 (#0)
-> GET /api/todos HTTP/1.1
-> Host: 127.0.0.1:8080
-> User-Agent: curl/7.64.1
-> Accept: */*
-> 
-* HTTP 1.0, assume close after body
-< HTTP/1.0 200 OK
-< Content-Type: application/json
-< Content-Length: 196
-< Server: Werkzeug/2.0.2 Python/3.8.3
-< Date: Thu, 13 Jan 2022 22:22:50 GMT
-< 
-[{"description":"Prepartion cours Java","id":"1","titre":"TODO 1"},{"description":"Prepartion cours Python","id":"2","titre":"TODO 2"},{"description":"Faire une pause","id":"3","titre":"TODO 3"}]
-* Closing connection 0
-
-```
 
 
 
