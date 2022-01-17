@@ -4,15 +4,12 @@ from sqlalchemy.orm import sessionmaker
 
 engine = create_engine("sqlite+pysqlite:///:memory:", echo=True, future=True)
 
-with engine.connect() as conn:
-    conn.execute(text("""
-    create table if not exists todo (
-        id integer primary key autoincrement,
-        title varchar(50) not null,
-        description  varchar(255)
-    )
-    """))
-    conn.commit()
+## Chargement du fichier d'initialisation de la bdd
+with open("../database/init.sql") as data:
+    scripts = "".join(data.readlines())
+    with engine.connect() as conn:
+        conn.execute(text(scripts))
+        conn.commit()
 
 todos = [
     {"title": "TODO 1", "description": "Prepartion cours Java"},

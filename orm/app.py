@@ -2,6 +2,12 @@ from config import SessionFactory
 from sqlalchemy import select, or_, not_
 from entity import Todo
 
+def displayTodos():
+    with SessionFactory() as session:
+        result = session.query(Todo).all()
+        for item in result:
+            print(item)
+
 with SessionFactory() as session:
     result = session.query(Todo).all()
     for item in result:
@@ -20,3 +26,26 @@ with SessionFactory() as session:
         .all()
     for item in result:
         print(item)
+
+with SessionFactory() as session:
+    todo = Todo("Flask - Jinja", "decrire le template JinJa2")
+    print(f"id : {todo.id}, Title : {todo.title}")
+    session.add(todo)
+    session.commit()
+    print(f"id : {todo.id}, Title : {todo.title}")
+
+displayTodos()
+
+with SessionFactory() as session:
+    todo = session.query(Todo).order_by(Todo.id.desc()).first()
+    print(todo)
+    todo.title="Flask - Jinja2"
+    session.commit()
+
+displayTodos()
+
+
+
+
+
+
