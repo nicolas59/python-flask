@@ -1,4 +1,6 @@
 from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
+from orm.entity import Todo
 
 engine = create_engine("sqlite+pysqlite:///:memory:", echo=True, future=True)
 
@@ -47,3 +49,12 @@ with engine.connect() as conn:
     result = conn.execute(text("select id, title, description from todo"))
     for dict_row  in result.mappings():
         print(f"id : {dict_row['id']}, title : {dict_row['title']}, description:{dict_row['description']}", row)
+
+""""
+Utilisation de l'ORM
+"""
+print("Recherche avec ORM")
+with Session(engine) as session:
+    items = session.query(Todo).all()
+    for todo in items:
+        print(f"id : {todo.id}, title : {todo.title}, description:{todo.description}")
