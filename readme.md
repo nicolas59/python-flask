@@ -2,6 +2,7 @@
 
 1. [A la découverte de Flask](01.flask.md)
 2. [SQL Alchemy](02.sql-alchemy.md)
+3. [Flask+SQL Alchemy](03.Flask+SQLAlchemy.md)
 
 ### Base de données
 

@@ -16,11 +16,12 @@ def shutdown_session(exception=None):
 
 @app.route("/api/todos")
 def findall():
-    results = [{"id":item.id, "title":item.title, "description":item.description} for item in Todo.query.all()]
+    results = [\
+        {"id":item.id, "title":item.title,\
+         "description":item.description} for item in Todo.query.all()]
+    logging.info(f"number of todos : {len(results)}")
     return jsonify(results)
 
-
-
-app.run()
+app.run(port=8090)
 
 
