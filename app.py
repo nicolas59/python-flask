@@ -52,7 +52,7 @@ def create_with_json():
         "titre": data["title"],
         "description": data["description"]
     })
-    return flask.Response(status=201, headers= {"Location" : f"/todos/{id}"});
+    return flask.Response(status=201, headers= {"Location" : f"/todos/{id}"})
 
 @app.route("/todos")
 def displayTodos():
@@ -75,5 +75,7 @@ def getTodo(id):
 def getTodoApi():
    return jsonify(todos)
 
+"""
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+"""

@@ -6,9 +6,9 @@
 
 ### Base de données
 
-### Prepération du projet
+### Préparation du projet
 
-> Etape de prépartion du projet
+> Etape de préparation du projet
 
 ```
 $ pip install flask
@@ -16,9 +16,9 @@ $ pip install flask-sqlalchemy
 $ pip freeze > requirements.tx
 ```
 
-La dernieré commande permet de générer un fichier contenant les dépendances.
+La dernière commande permet de générer un fichier contenant les dépendances.
 
-### Récuperation des dependances
+### Récupération des dependance
 
 > Etape lors de la récupération du projet
 
