@@ -15,18 +15,23 @@
             Nouveau
         </a>
     </div>
+    <table border="1">
+        <thead>
+        <tr>
+            <th> Id</th>
+            <th> Titre</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for todo in todos %}
+        <tr>
+            <td> {{ todo.id}}</td>
+            <td> {{ todo.title}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </header>
-<ul class="bg-slate-50 p-4 sm:px-8 sm:pt-6 sm:pb-8 lg:p-4 xl:px-8 xl:pt-6 xl:pb-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 text-sm leading-6">
-    {% for todo in todos %}
-    <li>
-        <div class="m-4 p-6 max-w-sm mx-auto bg-white rounded-xl shadow-lg flex items-center space-x-4">
-            <div>
-                <div class="text-xl font-medium text-black"> {{ todo.title}}</div>
-                <p class="text-slate-500"> {{ todo.description}}</p>
-            </div>
-        </div>
-    </li>
-    {% endfor %}
-</ul>
+
 {% endblock %}
 <!doctype html>
