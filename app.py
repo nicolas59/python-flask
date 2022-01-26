@@ -56,10 +56,10 @@ def create_with_json():
 
 @app.route("/todos")
 def displayTodos():
-    sort_by = request.args.get("sort_by")
     items = todos
     try:
-        if sort_by:
+        if "sort_by" in request.args:
+            sort_by = request.args["sort_by"]
             items = sorted(items, key=lambda it: it[sort_by])
     except:
         items = []
